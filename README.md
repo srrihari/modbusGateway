@@ -12,8 +12,11 @@ This project allows you to:
 ---
 ## 🎥 Project Demo Video
 
-[![Watch the demo](https://img.youtube.com/vi/VIDEO_ID/0.jpg)](https://www.youtube.com/watch?v=CVktuO2q0ig)
-
+<p align="center">
+  <a href="https://www.youtube.com/watch?v=CVktuO2q0ig">
+    <img src="https://img.youtube.com/vi/CVktuO2q0ig/0.jpg" width="70%">
+  </a>
+</p>
 
 ## Project Description
 
