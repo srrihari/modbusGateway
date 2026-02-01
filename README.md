@@ -30,7 +30,7 @@ These reference materials are **not created by this project** and are included *
 
 ### 📄 Reference Documentation (Original Product)
 
-- [View PDF – Original 4G Modbus Gateway Manual](./reference/4G_User_Manual.pdf)
+- [View PDF – Original 4G Modbus Gateway Manual](https://github.com/srrihari/modbusGateway/raw/main/reference/4G_User_Manual.pdf)
 
 ### ⚙️ Reference Software (Original Product)
 
