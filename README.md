@@ -10,6 +10,10 @@ This project allows you to:
 - Manage device settings without reflashing firmware
 
 ---
+## 🎥 Project Demo Video
+
+[![Watch the demo](https://img.youtube.com/vi/VIDEO_ID/0.jpg)](https://www.youtube.com/watch?v=CVktuO2q0ig)
+
 
 ## Project Description
 
@@ -36,6 +40,14 @@ These reference materials are **not created by this project** and are included *
 
 - [Download EXE – Original 4G Modbus Gateway Demo](https://github.com/srrihari/modbusGateway/raw/main/reference/MODBUS_GPRS_Config-V223.exe)
 
+## 🔌 Connectivity Note
+
+The **original 4G Modbus Gateway** connects to the internet using **4G cellular connectivity**.
+
+In this project, the **software-based web replica** uses **Wi-Fi connectivity** instead of 4G.  
+This change is made **only for implementation simplicity and accessibility**, while preserving the **overall communication workflow and behavior** of the gateway (e.g., cloud communication, data flow, and UI interaction).
+
+The difference in connectivity **does not affect the functional demonstration** of Modbus operations and cloud integration presented in this project.
 
 ---
 
