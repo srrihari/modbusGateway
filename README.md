@@ -11,6 +11,34 @@ This project allows you to:
 
 ---
 
+## Project Description
+
+This project is a **software-based web replica of a 4G Modbus Gateway**.
+
+It recreates the **user interface and observable operational behavior** of an industrial Modbus 4G gateway for learning and demonstration purposes. The focus is on understanding gateway configuration, Modbus function handling, and cloud communication workflows from a software perspective.
+
+### Reference Materials
+
+To provide context about the **original commercial 4G Modbus Gateway model**, the following reference files are included:
+
+- 📄 **PDF documentation** of the original 4G Modbus Gateway (for overview and understanding)
+- ⚙️ **Windows executable (.exe)** provided by the original gateway vendor (used only as a reference/demo of the actual product)
+
+These reference materials are **not created by this project** and are included **solely for comparison and understanding**.
+
+⚠️ This project does **not include physical gateway hardware** and is **not affiliated with the original gateway manufacturer**.
+
+### 📄 Reference Documentation (Original Product)
+
+- [View PDF – Original 4G Modbus Gateway Manual](./reference/Original_4G_Modbus_Gateway_Manual.pdf)
+
+### ⚙️ Reference Software (Original Product)
+
+- [Download EXE – Original 4G Modbus Gateway Demo](./reference/Original_4G_Modbus_Gateway_Demo.exe)
+
+
+---
+
 ## ✨ Features
 
 - 📡 **Modbus RTU (RS485)**
