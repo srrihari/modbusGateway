@@ -30,11 +30,11 @@ These reference materials are **not created by this project** and are included *
 
 ### 📄 Reference Documentation (Original Product)
 
-- [View PDF – Original 4G Modbus Gateway Manual](./reference/Original_4G_Modbus_Gateway_Manual.pdf)
+- [View PDF – Original 4G Modbus Gateway Manual](./reference/4G User Manual.pdf)
 
 ### ⚙️ Reference Software (Original Product)
 
-- [Download EXE – Original 4G Modbus Gateway Demo](./reference/Original_4G_Modbus_Gateway_Demo.exe)
+- [Download EXE – Original 4G Modbus Gateway Demo](./reference/MODBUS_GPRS Config-V223.exe)
 
 
 ---
