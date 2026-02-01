@@ -1,0 +1,15 @@
+{
+  "gprs": {
+    "apn": "airtelgprs.com"
+  },
+  "ap": { "ssid": "TEST-AP", "pass": "12345678" },
+  "mqtt": {
+    "host": "13.66.130.236",
+    "port": 1883,
+    "clientId": "B4_STP",
+    "user": "IRblaster",
+    "pass": "IR@123",
+    "topic": "IRblaster"
+  },
+  "poll_interval": 10000
+}

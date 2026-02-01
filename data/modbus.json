@@ -1,0 +1,13 @@
+[
+  {
+    "slave": 1,
+    "func": 4,
+    "start": 1,
+    "count": 2,
+    "poll": 2000,
+    "registers": [
+      { "index": 0, "name": "tem", "scale": 0.01 },
+      { "index": 1, "name": "hu", "scale": 0.01 }
+    ]
+  }
+]

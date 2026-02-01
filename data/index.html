@@ -1,0 +1,437 @@
+<!doctype html>
+<html>
+  <head>
+    <title>ESP32 Gateway</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+
+  <!-- MODBUS ADD FORM (MODAL) -->
+  <!-- Overlay -->
+  <div
+    id="modbusOverlay"
+    style="
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+    "
+  >
+    <!-- YOUR EXISTING FORM (unchanged logic) -->
+    <div
+      id="modbusForm"
+      style="
+        padding: 15px;
+        background: #f9f9f9;
+        border: 1px solid #ccc;
+        width: 700px;
+        max-height: 90vh;
+        overflow-y: auto;
+      "
+    >
+      <h3>Add Modbus Register</h3>
+
+      <label>Slave ID</label>
+      <input id="mb_slave" type="number" value="1" />
+
+      <label>Function Code</label>
+      <select id="mb_func">
+        <option value="1">Read Coil Status (FC01)</option>
+        <option value="2">Read Input Status (FC02)</option>
+        <option value="3">Read Holding Registers (FC03)</option>
+        <option value="4">Read Input Registers (FC04)</option>
+      </select>
+
+      <label>Start Address</label>
+      <input id="mb_start" type="number" />
+
+      <label>Word Count</label>
+      <input id="mb_count" type="number" oninput="generateRegisterRows()" />
+
+      <label>Poll Delay (ms)</label>
+      <input id="mb_poll" type="number" value="2000" />
+
+      <br /><br />
+
+      <table id="regTable" style="width: 100%; margin-top: 10px">
+        <tr>
+          <th>Index</th>
+          <th>Register Name</th>
+          <th>Scale</th>
+        </tr>
+      </table>
+
+      <br />
+      <button onclick="saveModbusRow()">Save</button>
+      <button onclick="closeModbusForm()">Cancel</button>
+    </div>
+  </div>
+
+  <body>
+    <input type="file" id="configFile" accept=".json" style="display: none" />
+
+    <input type="file" id="modbusFile" accept=".json" style="display: none" />
+
+    <!-- TOP TAB BAR -->
+    <div class="system-bar">
+      <button class="icon-btn blue" onclick="downloadConfig()">
+        <svg viewBox="0 0 24 24">
+          <path
+            fill="currentColor"
+            d="M5 20h14v-2H5m7-16v10l4-4 1.4 1.4L12 16.8 6.6 9.4 8 8l4 4V2z"
+          />
+        </svg>
+        Cfg
+      </button>
+
+      <button
+        class="icon-btn blue"
+        onclick="document.getElementById('configFile').click()"
+      >
+        <svg viewBox="0 0 24 24">
+          <path fill="currentColor" d="M5 20h14v-2H5m7-14l-7 7h4v4h6v-4h4z" />
+        </svg>
+        Cfg
+      </button>
+
+      <button class="icon-btn green" onclick="downloadModbus()">
+        <svg viewBox="0 0 24 24">
+          <path
+            fill="currentColor"
+            d="M12 2C7 2 3 3.8 3 6v12c0 2.2 4 4 9 4s9-1.8 9-4V6c0-2.2-4-4-9-4z"
+          />
+        </svg>
+        Modbus
+      </button>
+
+      <button
+        class="icon-btn green"
+        onclick="document.getElementById('modbusFile').click()"
+      >
+        <svg viewBox="0 0 24 24">
+          <path
+            fill="currentColor"
+            d="M12 2C7 2 3 3.8 3 6v12c0 2.2 4 4 9 4s9-1.8 9-4V6z"
+          />
+        </svg>
+        Modbus
+      </button>
+    </div>
+
+    <div class="topbar">
+      <button class="tab-btn active" onclick="openTab('ip', this)">
+        IP Set
+      </button>
+      <button class="tab-btn" onclick="openTab('connection', this)">
+        Connection
+      </button>
+      <button class="tab-btn" onclick="openTab('device', this)">Device</button>
+      <button class="tab-btn" onclick="openTab('mqtt', this)">MQTT</button>
+      <button class="tab-btn" onclick="openTab('modbusCfg', this)">
+        Modbus Cfg
+      </button>
+      <button class="tab-btn" onclick="openTab('modbusReg', this)">
+        Modbus Reg
+      </button>
+      <button class="tab-btn" onclick="openTab('status', this)">Status</button>
+      <button class="tab-btn" onclick="openTab('console', this)">
+        Console
+      </button>
+
+      <button class="logout" onclick="location.href = '/logout'">Logout</button>
+    </div>
+
+    <!-- IP SET -->
+    <div id="ip" class="tab">
+      <h3>IP Settings</h3>
+      <label>Protocol</label>
+      <select>
+        <option>LOGGER</option>
+        <option>TCP Client</option>
+        <option>MQTT</option>
+        <option>HTTP</option>
+      </select>
+
+      <label>Server IP / URL</label>
+      <input />
+
+      <label>Server Port</label>
+      <input value="8000" />
+
+      <label>SSL</label>
+      <select>
+        <option>No Auth</option>
+      </select>
+
+      <h4>Modem Settings</h4>
+      <label>APN</label>
+      <input value="www" />
+
+      <label>User Name</label>
+      <input />
+
+      <label>Password</label>
+      <input type="password" />
+    </div>
+
+    <!-- CONNECTION -->
+    <div id="connection" class="tab">
+      <h3>Connection Control</h3>
+
+      <label>IP Connect Mode</label>
+      <select>
+        <option>Always Online</option>
+      </select>
+
+      <label>Max Retries</label>
+      <input value="3" type="number" />
+
+      <label>Reconnect Interval (mins)</label>
+      <input value="2" type="number" />
+
+      <label>Device to Server Event Push Interval (Sec)</label>
+      <input value="30" type="number" />
+
+      <label>
+        <input type="checkbox" checked />
+        Keep Alive (Secs)
+      </label>
+
+      <label>Keep Alive Duration</label>
+      <input value="180" type="number" />
+
+      <label>Keep Alive Message</label>
+      <input value="PING" />
+
+      <hr />
+
+      <h4>Event Setting</h4>
+
+      <label>Select HTTP Method</label>
+      <select>
+        <option>POST</option>
+        <option>GET</option>
+      </select>
+
+      <label>Select Event Format</label>
+      <select>
+        <option>JSON Format std</option>
+        <option>JSON Format plain</option>
+        <option>JSON ThingSpeak</option>
+        <option>CSV Standard Format</option>
+        <option>CSV Custom Format</option>
+      </select>
+
+      <label>API Access Key</label>
+      <input value="EnergyMeter" />
+
+      <small>
+        Post hdr ( Param : Value ) / Json Event ( 'Param' : 'Value' )
+        <br />(use ' instead of ")
+      </small>
+
+      <label>API Key Add in</label>
+      <select>
+        <option>Disabled</option>
+        <option>Post Header</option>
+        <option selected>Json Event</option>
+      </select>
+
+      <hr />
+
+      <h4>Logger / Event Tx</h4>
+
+      <label>Flash Data Logging</label>
+      <select>
+        <option>Disable</option>
+        <option selected>Enable</option>
+        <option>Enable - FIFO Event Tx</option>
+      </select>
+    </div>
+
+    <!-- DEVICE -->
+    <!-- DEVICE / AP SETTINGS -->
+    <div id="device" class="tab">
+      <!-- ================= SYSTEM SECTION ================= -->
+      <h3>System</h3>
+      <div class="system-bar">
+        <button onclick="setRTCTime()">RTC Time Set</button>
+        <button onclick="resetDevice()">Reset</button>
+        <button class="danger" onclick="factoryReset()">Factory Default</button>
+      </div>
+
+      <hr />
+
+      <!-- ================= DEVICE / AP SECTION ================= -->
+
+      <div class="section">
+        <h3>Access Point Settings</h3>
+
+        <div class="form-grid">
+          <label>AP Name (SSID)</label>
+          <input id="ap_ssid" />
+
+          <label>AP Password</label>
+          <input id="ap_pass" type="password" />
+        </div>
+
+        <br />
+        <button onclick="saveDeviceConfig()">Save & Reboot</button>
+      </div>
+    </div>
+
+    <!-- MQTT -->
+    <div id="mqtt" class="tab">
+      <h3>MQTT Configuration</h3>
+
+      <label>Broker Host</label>
+      <input id="mqtt_host" />
+
+      <label>Broker Port</label>
+      <input id="mqtt_port" type="number" />
+
+      <label>Client ID</label>
+      <input id="mqtt_client" />
+
+      <label>Username</label>
+      <input id="mqtt_user" />
+
+      <label>Password</label>
+      <input id="mqtt_pass" type="password" />
+
+      <label>Topic</label>
+      <input id="mqtt_topic" />
+
+      <label>Poll Interval (ms)</label>
+      <input id="poll" type="number" />
+      <hr />
+
+      <h4>MQTT Test</h4>
+
+      <label>Test Message</label>
+      <input id="mqtt_test_msg" value="Hello from SustainAByte ESP32" />
+
+      <button onclick="sendTestMqtt()">Send Test Message</button>
+
+      <p id="test_result"></p>
+
+      <button class="save" onclick="saveConfig()">Save & Reboot</button>
+    </div>
+
+    <!-- MODBUS CONFIG -->
+    <div id="modbusCfg" class="tab">
+      <h3>RS485 Settings</h3>
+
+      <label>Baud Rate</label>
+      <select id="baud">
+        <option value="2400">2400</option>
+        <option value="4800">4800</option>
+        <option value="9600" selected>9600</option>
+        <option value="19200">19200</option>
+        <option value="38400">38400</option>
+        <option value="57600">57600</option>
+        <option value="115200">115200</option>
+      </select>
+
+      <label>Data Bits</label>
+      <select id="databits">
+        <option value="8">8</option>
+        <option value="7">7</option>
+      </select>
+
+      <label>Parity</label>
+      <select id="parity">
+        <option value="N">None</option>
+        <option value="E">Even</option>
+        <option value="O">Odd</option>
+      </select>
+
+      <label>Stop Bits</label>
+      <select id="stopbits">
+        <option value="1">1</option>
+        <option value="2">2</option>
+      </select>
+
+      <br /><br />
+      <button onclick="applyRS485()">Apply</button>
+    </div>
+
+    <!-- MODBUS REG -->
+    <div id="modbusReg" class="tab">
+      <h3>Modbus Register Mapping</h3>
+
+      <table>
+        <tr>
+          <th>Slave</th>
+          <th>Func</th>
+          <th>Start</th>
+          <th>Count</th>
+          <th>Poll</th>
+          <th>Action</th>
+        </tr>
+      </table>
+
+      <button onclick="openModbusForm()">Add Row</button>
+    </div>
+
+    <!-- STATUS -->
+    <div id="status" class="tab">
+      <h3>Status</h3>
+      <p>Modem : Connected</p>
+      <p>MQTT : Online</p>
+      <p>Last Publish : OK</p>
+    </div>
+
+    <!-- CONSOLE -->
+    <div id="console" class="tab">
+      <h3>Console</h3>
+
+      <!-- Action Bar -->
+      <div style="background: #fff3dc; padding: 10px; margin-bottom: 10px">
+        <button onclick="clearConsole()">Clear</button>
+        <button onclick="toggleLog()" style="background: #f3a6ff">
+          Log Monitor ON
+        </button>
+      </div>
+
+      <!-- Command Input -->
+      <div style="display: flex; gap: 10px; margin-bottom: 8px">
+        <input
+          id="console_cmd"
+          value="<Get.ip:>"
+          style="flex: 1; font-family: monospace"
+        />
+        <button onclick="sendConsoleCmd()">Send</button>
+      </div>
+
+      <!-- Log Output -->
+      <label>System Log</label>
+      <textarea
+        id="console_log"
+        style="width: 100%; height: 300px; resize: none; font-family: monospace"
+        readonly
+      ></textarea>
+    </div>
+
+    <script src="app.js"></script>
+    <script>
+      function openModbusForm() {
+        document.getElementById("modbusOverlay").style.display = "flex";
+      }
+
+      function closeModbusForm() {
+        document.getElementById("modbusOverlay").style.display = "none";
+      }
+      document
+        .getElementById("modbusOverlay")
+        .addEventListener("click", function (e) {
+          if (e.target === this) {
+            closeModbusForm();
+          }
+        });
+    </script>
+  </body>
+</html>
