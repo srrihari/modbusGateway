@@ -34,7 +34,7 @@ These reference materials are **not created by this project** and are included *
 
 ### ⚙️ Reference Software (Original Product)
 
-- [Download EXE – Original 4G Modbus Gateway Demo](./reference/MODBUS_GPRS_Config-V223.exe)
+- [Download EXE – Original 4G Modbus Gateway Demo](https://github.com/srrihari/modbusGateway/raw/main/reference/MODBUS_GPRS_Config-V223.exe)
 
 
 ---
