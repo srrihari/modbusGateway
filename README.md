@@ -109,6 +109,51 @@ The difference in connectivity **does not affect the functional demonstration** 
 
 ---
 
+## Hardware Architecture
+
+                                                  ┌─────────────────┐
+                                                  │  MD02 Sensor    │
+                                                  │ Temp/Humidity   │
+                                                  │ Slave ID = 1    │
+                                                  └──────┬───────┬──┘
+                                                         │A+     │B-
+                                                         │       │
+                                                  ┌──────▼───────▼──┐
+                                                  │     MAX485      │
+                                                  │ RS485 Converter │
+                                                  └───┬─────┬─────┬─┘
+                                                      │RO   │DI   │DE+RE
+                                                      │     │     │
+                                                GPIO26  GPIO27  GPIO25
+                                                      │     │     │
+                                              ┌───────▼─────▼─────▼──────┐
+                                              │         ESP32            │
+                                              │  Web UI + Modbus + MQTT  │
+                                              └───────────┬──────────────┘
+                                                          │ WiFi
+                                                          │
+                                                   ┌──────▼──────┐
+                                                   │ MQTT Broker │
+                                                   │ HiveMQ/EMQX │
+                                                   └──────┬──────┘
+                                                          │
+                                            ┌─────────────┼─────────────┐
+                                            │             │             │
+                                    React Dashboard   Node.js API   Mobile App
+
+                 
+### Data Flow
+
+                  MD02
+                    ↓ Modbus RTU
+                  MAX485
+                    ↓ UART
+                  ESP32
+                    ↓ MQTT
+                  broker.hivemq.com
+                    ↓
+                  Dashboard / Azure / Node.js
+
 ## 📁 Project Structure
 
 modbusGateway/ <br />
